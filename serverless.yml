@@ -11,19 +11,17 @@
 #
 # Happy Coding!
 
-service: aws-nodejs # NOTE: update this with your service name
+service: notizen-api # NOTE: update this with your service name
 
-# You can pin your service to only deploy with a specific Serverless version
-# Check out our docs for more details
-# frameworkVersion: "=X.X.X"
+# Custom variables for use within the deployment configuration
+custom:
+  uploadBucketName: '${self:service}-uploads-${self:provider.stage}'
 
 provider:
   name: aws
   runtime: nodejs6.10
-
-# you can overwrite defaults here
-#  stage: dev
-#  region: us-east-1
+  stage: dev
+  region: us-west-2
 
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
@@ -54,9 +52,9 @@ provider:
 #    - exclude-me.js
 #    - exclude-me-dir/**
 
-functions:
-  hello:
-    handler: handler.hello
+#functions:
+#  hello:
+#    handler: handler.hello
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
@@ -91,13 +89,23 @@ functions:
 #    environment:
 #      variable2: value2
 
-# you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
+#############################################
+# Add CloudFormation resource templates here
+#############################################
+resources:
+  Resources:
+    NotizenUploadBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: '${self:custom.uploadBucketName}'
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders: ['*']
+              AllowedMethods: [GET,PUT,POST,HEAD]
+              AllowedOrigins: ['*']
+              MaxAge: '3600'
+
+
 #  Outputs:
 #     NewOutput:
 #       Description: "Description for the output"

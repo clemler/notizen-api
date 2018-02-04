@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/clemler/notizen-api/issues"
   },
-  "homepage": "https://github.com/clemler/notizen-api#readme"
+  "homepage": "https://github.com/clemler/notizen-api#readme",
+  "devDependencies": {
+    "jest": "^22.1.4"
+  }
 }

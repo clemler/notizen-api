@@ -1,0 +1,26 @@
+{
+  "name": "notizen-api",
+  "version": "0.0.1",
+  "description": "Serverless notes application with attachments",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clemler/notizen-api.git"
+  },
+  "keywords": [
+    "serverless",
+    "aws",
+    "lambda",
+    "s3",
+    "dynamodb"
+  ],
+  "author": "Chris Lemler",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/clemler/notizen-api/issues"
+  },
+  "homepage": "https://github.com/clemler/notizen-api#readme"
+}

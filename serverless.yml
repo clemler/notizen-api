@@ -16,6 +16,7 @@ service: notizen-api # NOTE: update this with your service name
 # Custom variables for use within the deployment configuration
 custom:
   uploadBucketName: '${self:service}-uploads-${self:provider.stage}'
+  dynamodbTableName: '${self:service}-table-${self:provider.stage}'
 
 provider:
   name: aws
@@ -23,25 +24,25 @@ provider:
   stage: dev
   region: us-west-2
 
-# you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-#            - "/*"
+# Add statements to the Lambda function's IAM Role here
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - { "Fn::GetAtt": ["NotizenDynamoDBTable", "Arn"] }
 
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
+#####################################
+# Service wide environment variables
+#####################################
+  environment:
+    variable1: value1
 
 # you can add packaging information here
 #package:
@@ -104,6 +105,27 @@ resources:
               AllowedMethods: [GET,PUT,POST,HEAD]
               AllowedOrigins: ['*']
               MaxAge: '3600'
+    NotizenDynamoDBTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: 'userId'
+            AttributeType: 'S'
+          -
+            AttributeName: 'noteId'
+            AttributeType: 'S'
+        KeySchema:
+          -
+            AttributeName: 'userId'
+            KeyType: 'HASH'
+          -
+            AttributeName: 'noteId'
+            KeyType: 'RANGE'
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        TableName: '${self:custom.dynamodbTableName}'
 
 
 #  Outputs:

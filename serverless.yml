@@ -13,8 +13,16 @@
 
 service: notizen-api # NOTE: update this with your service name
 
+##############################################
+# Plugins
+# -- serverless-webpack to transpile ES6/ES7
+#############################################
+plugins:
+  - serverless-webpack
+
 # Custom variables for use within the deployment configuration
 custom:
+  webpackIncludeModules: true
   uploadBucketName: '${self:service}-uploads-${self:provider.stage}'
   dynamodbTableName: '${self:service}-table-${self:provider.stage}'
 

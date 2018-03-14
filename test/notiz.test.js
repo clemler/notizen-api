@@ -20,39 +20,46 @@ describe('Can construct new Notes', () => {
     noteId = uuid.v4();
   });
 
-  test('Construct Note with correct parameters', () => {
-    let note = createNote(userId, content, attachment, noteId, createdAt);
-    console.log(util.inspect(note));
-    expect(note.userId).toEqual(userId);
-    expect(note.content).toEqual(content);
-    expect(note.createdAt).toEqual(createdAt);
-    expect(note.noteId).toEqual(noteId);
+  test('Construct Note with all parameters provided', () => {
+    return createNote(userId, content, attachment, { noteId, createdAt })
+      .then((note) => {
+        expect(note.userId).toEqual(userId);
+        expect(note.content).toEqual(content);
+        expect(note.attachment).toEqual(attachment);
+        expect(note.createdAt).toEqual(createdAt);
+        expect(note.noteId).toEqual(noteId);
+      });
+  });
+
+  test('Construct a basic note without an attachment', () => {
+    return createNote(userId, content)
+      .then((note) => {
+        expect(note.userId).toEqual(userId);
+        expect(note.content).toEqual(content);
+        expect(note.attachment).toEqual('');
+        expect(note.createdAt).not.toBeUndefined();
+        expect(note.noteId).not.toBeUndefined();
+      });
+  });
+
+  test('Construct a basic note with an attachment', () => {
+    return createNote(userId, content, attachment)
+      .then((note) => {
+        expect(note.userId).toEqual(userId);
+        expect(note.content).toEqual(content);
+        expect(note.attachment).toEqual(attachment);
+        expect(note.createdAt).not.toBeUndefined();
+        expect(note.noteId).not.toBeUndefined();
+      });
   });
 
   test('Construct Note without an ID', () => {
-    let note = createNote(userId, content, attachment);
-    console.log(util.inspect(note));
-    expect(note.userId).toEqual(userId);
-    expect(note.content).toEqual(content);
-    expect(note.createdAt).toEqual(createdAt);
-    expect(note.noteId).not.toBeUndefined();
+    return createNote(userId, content, attachment, {createdAt})
+      .then((note) => {
+        expect(note.userId).toEqual(userId);
+        expect(note.content).toEqual(content);
+        expect(note.createdAt).toEqual(createdAt);
+        expect(note.noteId).not.toBeUndefined();
+      });
   });
-
-  test('Construct Note without an attachment', () => {
-    let note = createNote(userId, content);
-    console.log(util.inspect(note));
-    expect(note.userId).toEqual(userId);
-    expect(note.content).toEqual(content);
-    expect(note.noteId).not.toBeUndefined();
-    expect(note.createdAt).not.toBeUndefined();
-  });
-
-  // test('Construct Note without passing parameters (defaults)', () => {
-  //   let note = new Note();
-  //   console.log(util.inspect(note));
-  //   expect(note.content).not.toBeUndefined();
-  //   expect(note.createdAt).not.toBeUndefined();
-  //   expect(note.noteId).not.toBeUndefined();
-  //   console.log(JSON.stringify(note));
-  // });
 });

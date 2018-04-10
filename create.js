@@ -20,8 +20,16 @@ function main(event, context, callback) {
   createNote('USER-1234', data.content, data.attachment)
     .then((note) => {
       logger.info(util.inspect(note));
+      return saveNote(note);
+    })
+    .then((result) => {
+      logger.info(`Saved note --> ${result}`);
+      callback(null, result);
+    })
+    .catch((error) => {
+      logger.error(error);
+      callback(error, null);
     });
-  callback(null, data);
 }
 
 module.exports = { main };

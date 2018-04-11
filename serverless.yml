@@ -20,17 +20,32 @@ service: notizen-api # NOTE: update this with your service name
 plugins:
   - serverless-webpack
 
+##############################################
+# Provider Defaults
+# -- runtime nodejs 8.10
+# -- stage dev  (this can be overriden in custom)
+# -- region us-west-2
+#############################################
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: dev
+  region: us-west-2
+
+#####################################
+# Provider wide environment variables
+#####################################
+  environment:
+    NOTIZEN_TABLE: ${self:custom.dynamodbTableName}
+
 # Custom variables for use within the deployment configuration
 custom:
   webpackIncludeModules: true
-  uploadBucketName: '${self:service}-uploads-${self:provider.stage}'
-  dynamodbTableName: '${self:service}-table-${self:provider.stage}'
+  deployStage: ${opt:stage, self:provider.stage}
+  uploadBucketName: '${self:service}-uploads-${self:custom.deployStage}'
+  dynamodbTableName: '${self:service}-table-${self:custom.deployStage}'
 
-provider:
-  name: aws
-  runtime: nodejs6.10
-  stage: dev
-  region: us-west-2
+
 
 # Add statements to the Lambda function's IAM Role here
   iamRoleStatements:
@@ -46,11 +61,6 @@ provider:
       Resource:
         - { "Fn::GetAtt": ["NotizenDynamoDBTable", "Arn"] }
 
-#####################################
-# Service wide environment variables
-#####################################
-  environment:
-    variable1: value1
 
 # you can add packaging information here
 #package:
